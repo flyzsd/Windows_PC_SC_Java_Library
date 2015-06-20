@@ -23,25 +23,28 @@ public static void main(String[] args) {
   String[] readers = PCSCAPI.SCardListReaders(hContext);
     
   SCARD_READERSTATE[] readerStates = new SCARD_READERSTATE[readers.length + 1];
+  
   //this is to monitor the state of current available readers
-	for(int i=0; i<readerStates.length - 1; i++) {
-		readerStates[i] = new SCARD_READERSTATE();
-		readerStates[i].szReader = readers[i];
-		readerStates[i].dwCurrentState = PCSCAPI.SCARD_STATE_UNAWARE;
-	}
-	//this is to monitor any reader connected or disconnected
-	readerStates[readerStates.length - 1] = new SCARD_READERSTATE();
-	readerStates[readerStates.length - 1].szReader = "\\\\?PNP?\\NOTIFICATION";
-	readerStates[readerStates.length - 1].dwCurrentState = PCSCAPI.SCARD_STATE_UNAWARE;
+  for(int i=0; i<readerStates.length - 1; i++) {
+	readerStates[i] = new SCARD_READERSTATE();
+	readerStates[i].szReader = readers[i];
+	readerStates[i].dwCurrentState = PCSCAPI.SCARD_STATE_UNAWARE;
+  }
+  //this is to monitor any reader connected or disconnected
+  readerStates[readerStates.length - 1] = new SCARD_READERSTATE();
+  readerStates[readerStates.length - 1].szReader = "\\\\?PNP?\\NOTIFICATION";
+  readerStates[readerStates.length - 1].dwCurrentState = PCSCAPI.SCARD_STATE_UNAWARE;
 		
-	while(true) {
-		readerStates = PCSCAPI.SCardGetStatusChange(hContext, PCSCAPI.TIMEOUT_INFINITE, readerStates);	
-		...
-		//processing reader states
-		...
-		for(int i=0; i<readerStates.length; i++) {
-			readerStates[i].dwCurrentState = readerStates[i].dwEventState;
-		}
+  while(true) {
+	readerStates = PCSCAPI.SCardGetStatusChange(hContext, PCSCAPI.TIMEOUT_INFINITE, readerStates);	
+	...
+	//processing reader states
+	...
+	for(int i=0; i<readerStates.length; i++) {
+		readerStates[i].dwCurrentState = readerStates[i].dwEventState;
 	}
+  }
+  ...
+  PCSCAPI.SCardReleaseContext(hContext);
 }
 ```
