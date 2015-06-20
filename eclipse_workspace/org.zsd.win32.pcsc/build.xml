@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.zsd.win32.utils" default="build" basedir=".">
+	<target name="init">
+		<property name="destdir" value="${basedir}/build.bin"/>
+		<tstamp>
+	    	<format property="build.date" pattern="yyyy-MM-dd HH:mm:ss" />
+	   	</tstamp>
+	</target>
+
+	<target name="build" depends="init" description="Create jar: win32pcsc.jar.">
+    	<delete dir="${destdir}"/>
+	   	<mkdir dir="${destdir}"/>
+        <!-- compile the source code -->
+        <javac destdir="${destdir}" failonerror="true" verbose="true" debug="true" includeAntRuntime="no" classpath="lib/slf4j-api-1.6.1.jar;./../org.zsd.win32.utils/win32utils.jar">
+        	<src path="src/"/>
+        </javac>
+        <jar jarfile="win32pcsc.jar" basedir="${destdir}">
+            <manifest>
+            	<attribute name="Built-By" value="${user.name}"/>
+            	<attribute name="Built-Date" value="${build.date}"/>
+            </manifest>
+        </jar>
+    	<delete dir="${destdir}"/>
+	</target>
+</project>

@@ -1,0 +1,94 @@
+package org.zsd.win32.pcsc.test;
+
+import java.util.concurrent.ExecutorService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.zsd.win32.pcsc.PCSCAPI;
+import org.zsd.win32.pcsc.PCSCException;
+import org.zsd.win32.pcsc.SCARD_READERSTATE;
+
+public class ReaderHandler implements Runnable {
+	private final static Logger logger = LoggerFactory.getLogger(ReaderHandler.class);
+	private final ExecutorService excutors;
+	
+	public ReaderHandler(ExecutorService excutors){
+		this.excutors = excutors;
+	}
+	
+	@Override
+	public void run() {
+		logger.debug("ReaderHandler...");
+		int hContext = 0;
+		try {
+			hContext = PCSCAPI.SCardEstablishContext();
+			logger.debug("SCardEstablishContext() hContext = " + Integer.toHexString(hContext));
+			
+			while(true) {
+				String[] readers = PCSCAPI.SCardListReaders(hContext);
+				logger.debug("============================================");
+				for(int i=0; i<readers.length; i++) {
+					logger.debug(readers[i]);
+				}
+				
+				SCARD_READERSTATE[] readerStates = new SCARD_READERSTATE[readers.length + 1];
+				for(int i=0; i<readerStates.length - 1; i++) {
+					readerStates[i] = new SCARD_READERSTATE();
+					readerStates[i].szReader = readers[i];
+					readerStates[i].dwCurrentState = PCSCAPI.SCARD_STATE_UNAWARE;
+				}
+				readerStates[readerStates.length - 1] = new SCARD_READERSTATE();
+				readerStates[readerStates.length - 1].szReader = "\\\\?PNP?\\NOTIFICATION";
+				readerStates[readerStates.length - 1].dwCurrentState = PCSCAPI.SCARD_STATE_UNAWARE;
+				
+				while(true) {
+					readerStates = PCSCAPI.SCardGetStatusChange(hContext, PCSCAPI.TIMEOUT_INFINITE, readerStates);			
+					
+					for(int i=0; i<readerStates.length; i++) {
+						if((readerStates[i].dwEventState & PCSCAPI.SCARD_STATE_CHANGED) != 0x00) {
+							logger.debug(readerStates[i].toString());
+						}
+					}
+					
+					for(int i=0; i<readerStates.length-1; i++) {
+						if((readerStates[i].dwEventState & PCSCAPI.SCARD_STATE_CHANGED) != 0x00) {
+							if((readerStates[i].dwEventState & PCSCAPI.SCARD_STATE_IGNORE) != 0x00 || (readerStates[i].dwEventState & PCSCAPI.SCARD_STATE_UNAVAILABLE) != 0x00) {
+								//ignore
+							}
+							else if((readerStates[i].dwEventState & PCSCAPI.SCARD_STATE_MUTE) != 0x00) {
+								//unresponsive card in the reader
+								//ignore
+							}
+							else if((readerStates[i].dwCurrentState & PCSCAPI.SCARD_STATE_PRESENT) == 0x00 &&
+									(readerStates[i].dwEventState & PCSCAPI.SCARD_STATE_PRESENT) != 0x00) {
+								excutors.submit(new CardHandler(readerStates[i]));
+							}
+						}
+					}
+					
+					if(readerStates[readerStates.length - 1].dwCurrentState != PCSCAPI.SCARD_STATE_UNAWARE &&				//not the initial state
+							(readerStates[readerStates.length - 1].dwEventState & PCSCAPI.SCARD_STATE_CHANGED) != 0x00) {	//readers changed, re-synchronize
+						break;
+					}
+					
+					for(int i=0; i<readerStates.length; i++) {
+						readerStates[i].dwCurrentState = readerStates[i].dwEventState;
+					}
+				}
+			}
+		}
+		catch(Throwable ex) {
+			logger.error("PCSCException " + ex, ex);
+		}
+		finally {
+			if(hContext != 0) {
+				try {
+					PCSCAPI.SCardReleaseContext(hContext);
+				}
+				catch(PCSCException ex) {
+					logger.error("PCSCException " + ex, ex);
+				}
+			}
+		}
+	}
+}

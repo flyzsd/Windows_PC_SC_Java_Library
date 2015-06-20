@@ -1,0 +1,162 @@
+package org.zsd.win32.utils;
+
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class OS {	
+	private final static Logger LOGGER = LoggerFactory.getLogger(OS.class);
+	
+	public final static void PostQuitMessage(int nExitCode) {
+		OSNative.PostQuitMessage(nExitCode);
+	}
+	
+	public final static int char_sizeof() {
+		return OSNative.char_sizeof();
+	}
+	
+	public final static int wchar_t_sizeof() {
+		return OSNative.wchar_t_sizeof();
+	}
+	
+	public final static int short_sizeof() {
+		return OSNative.short_sizeof();
+	}
+	
+	public final static int int_sizeof() {
+		return OSNative.int_sizeof();
+	}
+	
+	public final static int long_sizeof() {
+		return OSNative.long_sizeof();
+	}
+	
+	public final static int handle_sizeof() {
+		return OSNative.handle_sizeof();
+	}
+	
+	public final static int AllocateBuffer(int ulSize) {
+		return OSNative.AllocateBuffer(ulSize);
+	}
+	
+	public final static int AllocateMore(int ulSize, int lpvOriginal) {
+		return OSNative.AllocateMore(ulSize,lpvOriginal);
+	}
+	
+	public final static void FreeBuffer(int lpvOriginal) {
+		OSNative.FreeBuffer(lpvOriginal);
+	}
+	
+	public final static void setByteArray(int handle, byte[] array) {
+		LOGGER.trace("+OS.setByteArray() handle = " + String.format("0x%08X", handle) + " array = [" + HexString.hexify(array) + "]");
+		OSNative.setByteArray(handle, array);
+		LOGGER.trace("-OS.setByteArray()");
+	}
+
+	public final static byte[] getByteArray(int handle) {
+		LOGGER.trace("+getByteArray() handle = " + String.format("0x%08X", handle));
+		byte[] array =  OSNative.getByteArray(handle);
+		LOGGER.trace("-OS.getByteArray() = [" + HexString.hexify(array) + "]");
+		return array;
+	}
+	
+	public final static byte[] getByteArray(int handle, int length) {
+		LOGGER.trace("+OS.getByteArray() handle = " + String.format("0x%08X", handle) + " length = " + length);
+		byte[] array =  OSNative.getByteArray(handle, length);
+		LOGGER.trace("-OS.getByteArray() = [" + HexString.hexify(array) + "]");
+		return array;
+	}
+	
+	public final static void setShortArray(int handle, short[] array) {
+		OSNative.setShortArray(handle, array);
+	}
+
+	public final static short[] getShortArray(int handle) {
+		LOGGER.trace("+OS.getShortArray() handle = " + String.format("0x%08X", handle));
+		short[] array = OSNative.getShortArray(handle);
+		LOGGER.trace("-OS.getShortArray() " + Arrays.toString(array));
+		return array;
+	}
+	
+	public final static short[] getShortArray(int handle, int length) {
+		return OSNative.getShortArray(handle, length);
+	}
+	
+	public final static void setIntArray(int handle, int[] array) {
+		OSNative.setIntArray(handle, array);
+	}
+	
+	public final static int[] getIntArray(int handle) {
+		LOGGER.trace("+getIntArray() handle = " + String.format("0x%08X", handle));
+		int[] array = OSNative.getIntArray(handle);
+		LOGGER.trace("-getIntArray() = " + Arrays.toString(array));
+		return array;
+	}
+	
+	public final static int[] getIntArray(int handle, int length) {
+		return OSNative.getIntArray(handle, length);
+	}
+	
+	public final static void setLongArray(int handle, long[] array) {
+		OSNative.setLongArray(handle, array);
+	}
+	
+	public final static long[] getLongArray(int handle) {
+		LOGGER.trace("+getLongArray() handle = " + String.format("0x%08X", handle));
+		long[] array = OSNative.getLongArray(handle);
+		LOGGER.trace("-getLongArray() = " + Arrays.toString(array));
+		return array;
+	}
+	
+	public final static long[] getLongArray(int handle, int length) {
+		return OSNative.getLongArray(handle, length);
+	}
+	
+	public final static byte[] getDoubleNullTerminatedByteArray(int handle) {
+		LOGGER.trace("+OS.getDoubleNullTerminatedByteArray() handle = " + String.format("0x%08X", handle));
+		byte[] array = OSNative.getDoubleNullTerminatedByteArray(handle);
+		LOGGER.trace("-OS.getDoubleNullTerminatedByteArray() = [" + HexString.hexify(array) + "]");
+		return array;
+	}
+	
+	public final static String getNullTerminatedCString(int handle) {
+		return OSNative.getNullTerminatedCString(handle);
+	}
+	
+	//null terminated C wide string
+	public final static String getNullTerminatedCWideString(int handle) {
+		return OSNative.getNullTerminatedCWideString(handle);
+	}
+	
+	public final static String[] getDoubleNullTerminatedCString(int handle) {
+		return OSNative.getDoubleNullTerminatedCString(handle);
+	}
+	
+	public final static String[] getDoubleNullTerminatedCWideString(int handle) {
+		return OSNative.getDoubleNullTerminatedCWideString(handle);
+	}
+	
+	public final static String getCWideString(int handle, int length) {
+		return OSNative.getCWideString(handle, length);
+	}
+	
+	public final static void setCString(int handle, String string) {
+		OSNative.setCString(handle, string);
+	}
+	
+	public final static void setCWideString(int handle, String string) {
+		OSNative.setCWideString(handle, string);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("char_sizeof = " + OS.char_sizeof());
+		System.out.println("wchar_t_sizeof = " + OS.wchar_t_sizeof());
+		System.out.println("short_sizeof = " + OS.short_sizeof());
+		System.out.println("int_sizeof = " + OS.int_sizeof());
+		System.out.println("long_sizeof = " + OS.long_sizeof());
+		System.out.println("handle_sizeof = " + OS.handle_sizeof());
+		int handle = OS.AllocateBuffer(10);
+		int handle2 = OS.AllocateMore(100, lpvOriginal);
+	}
+}

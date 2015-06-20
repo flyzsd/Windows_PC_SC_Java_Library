@@ -1,0 +1,125 @@
+package org.zsd.win32.pcsc.test;
+
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.zsd.win32.pcsc.HexString;
+import org.zsd.win32.pcsc.PCSCAPI;
+import org.zsd.win32.pcsc.SCARD_READERSTATE;
+
+public class CardHandler implements Runnable {
+	private final static Logger logger = LoggerFactory.getLogger(CardHandler.class);
+	private final String reader;
+	
+	public CardHandler(SCARD_READERSTATE readerState){
+		this.reader = readerState.szReader;
+		logger.debug("ATR = " + HexString.hexify(readerState.rgbAtr, 0, readerState.cbAtr));
+	}
+	
+	@Override
+	public void run() {
+		System.out.println("Card detected");
+		int hContext = 0;
+		int hCard = 0;
+		try {
+			hContext = PCSCAPI.SCardEstablishContext();
+			logger.debug("SCardEstablishContext() hContext = " + String.format("0x%08X", hContext));
+			
+			int[] dwActiveProtocol = new int[1];
+			hCard = PCSCAPI.SCardConnect(hContext, reader, PCSCAPI.SCARD_SHARE_SHARED, PCSCAPI.SCARD_PROTOCOL_T0|PCSCAPI.SCARD_PROTOCOL_T1, dwActiveProtocol);
+			logger.debug("SCardConnect() hCard = " + String.format("0x%08X", hCard) + ", dwActiveProtocol = " + dwActiveProtocol[0]);
+										
+			byte[] bytes = PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_VENDOR_NAME);
+			if(bytes != null) {
+				logger.debug("SCARD_ATTR_VENDOR_NAME = " + new String(bytes));
+			}
+			bytes = PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_VENDOR_IFD_TYPE);
+			if(bytes != null) {
+				logger.debug("SCARD_ATTR_VENDOR_IFD_TYPE = " + new String(bytes));
+			}
+			PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_VENDOR_IFD_VERSION);
+			PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_VENDOR_IFD_SERIAL_NO);
+			
+			PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_ATR_STRING);
+			PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_DEVICE_FRIENDLY_NAME);
+			PCSCAPI.SCardGetAttrib(hContext, hCard, PCSCAPI.SCARD_ATTR_DEVICE_SYSTEM_NAME);
+			
+			String[] readerName = new String[1];
+			int[] dwState = new int[1];
+			final int[] dwProtocol = new int[1];
+			byte[] atr = PCSCAPI.SCardStatus(hContext, hCard,readerName, dwState, dwProtocol);
+			logger.debug("SCardStatus() readerName = " + readerName[0]);
+			logger.debug("SCardStatus() dwState = " + dwState[0]);
+			logger.debug("SCardStatus() dwProtocol = " + dwProtocol[0]);
+			logger.debug("SCardStatus() atr = " + HexString.dump(atr));
+
+			/*
+			final ATR cardATR = new ATR(atr);
+			
+			final int context = hContext;
+			final int card = hCard;
+			final ICardChannel channel = new ICardChannel() {				@Override
+				public byte[] executeCommand(byte[] command) throws CardTerminalException {
+					try {
+						return PCSCAPI.SCardTransmit(context, card, dwProtocol[0], command);
+					} 
+					catch (PCSCException ex) {
+						throw new CardTerminalException(ex);
+					}
+				}
+			
+				@Override
+				public ATR getATR() {
+					return cardATR;
+				}	
+			};*/
+			
+			/*
+			EMVCardService cardService = new EMVCardService(channel);
+			PPSE ppse = cardService.selectPPSE();
+			List<DirectoryEntry> list = ppse.getDirectoryEntryList();
+			for(DirectoryEntry entry : list) {
+				BerTLV tlv = entry.getICCData(BerTag.TAG_ADF_NAME);
+				logger.debug("ADF = " + tlv);
+				cardService.selectApplet(new AID(tlv.getValue()));
+				Map<BerTag, BerTLV> map = new HashMap<BerTag, BerTLV>();
+				map.put(BerTag.TAG_TERMINAL_COUNTRY_CODE, new BerTLV(BerTag.TAG_TERMINAL_COUNTRY_CODE, new byte[]{0x07, 0x02}));
+				map.put(BerTag.TAG_TXN_CURRENCY_CODE, new BerTLV(BerTag.TAG_TXN_CURRENCY_CODE, new byte[]{0x07, 0x02}));			
+				map.put(BerTag.TAG_AUTHORISED_AMT_NUM, new BerTLV(BerTag.TAG_AUTHORISED_AMT_NUM, new byte[]{0x00, 0x00, 0x00, 0x00, 0x01, 0x00}));
+				//00 - purchase transaction
+				//01 - cach advance
+				//09 - purchase with cashback
+				//20 - refund transaction
+				map.put(BerTag.TAG_TXN_TYPE, new BerTLV(BerTag.TAG_TXN_TYPE, new byte[]{0x00}));
+				//Terminal Transaction Qualifiers - 9F66
+				map.put(BerTag.TAG_TERMINAL_TXN_QUALIFIERS, new BerTLV(BerTag.TAG_TERMINAL_TXN_QUALIFIERS, new byte[]{0x37, 0x00, (byte)0x80, 0x00}));
+				byte[] pdol = null;
+				cardService.getProcessingOptions(pdol);
+			}
+			*/
+		
+		}
+		catch(Throwable ex) {
+			logger.error("PCSCException ", ex);
+		}
+		finally {
+			if(hCard != 0) {
+				try {
+					PCSCAPI.SCardDisconnect(hCard, PCSCAPI.SCARD_LEAVE_CARD);
+				}
+				catch(Throwable ex) {
+					logger.error("PCSCException", ex);
+				}
+			}
+			if(hContext != 0) {
+				try {
+					PCSCAPI.SCardReleaseContext(hContext);
+				}
+				catch(Throwable ex) {
+					logger.error("PCSCException", ex);
+				}
+			}
+		}
+	}
+}

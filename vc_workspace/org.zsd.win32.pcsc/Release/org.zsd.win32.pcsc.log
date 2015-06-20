@@ -1,0 +1,28 @@
+﻿Build started 6/20/2015 11:04:38 PM.
+     1>Project "C:\temp\PCSCJavaSolution\vc_workspace\org.zsd.win32.pcsc\org.zsd.win32.pcsc.vcxproj" on node 3 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\org.zsd.win32.pcsc.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\java70\include /IC:\java70\include\win32 /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Release\org.zsd.win32.pcsc.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\java70\include /IC:\java70\include\win32 /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Release\org.zsd.win32.pcsc.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\org.zsd.win32.utils\dllmain.cpp org_zsd_win32_pcsc_PCSC.cpp
+         dllmain.cpp
+         org_zsd_win32_pcsc_PCSC.cpp
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.dll" /INCREMENTAL:NO /NOLOGO Winscard.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\org.zsd.win32.pcsc.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.lib" /MACHINE:X86 /DLL Release\dllmain.obj
+         Release\org_zsd_win32_pcsc_PCSC.obj
+         Release\stdafx.obj
+            Creating library C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.lib and object C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.exp
+         Generating code
+         Finished generating code
+         org.zsd.win32.pcsc.vcxproj -> C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.dll
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\temp\PCSCJavaSolution\vc_workspace\Release\org.zsd.win32.pcsc.dll;#2" /manifest Release\org.zsd.win32.pcsc.dll.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\org.zsd.win32.pcsc.unsuccessfulbuild".
+         Touching "Release\org.zsd.win32.pcsc.lastbuildstate".
+     1>Done Building Project "C:\temp\PCSCJavaSolution\vc_workspace\org.zsd.win32.pcsc\org.zsd.win32.pcsc.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.39
