@@ -2,14 +2,17 @@
 This project offers WinSCard API in Java, which supports PC/SC reader in Windows platform
 
 This java library is built on top of the WinSCard native library (Windows Smart Card SDK), which offers more capability and flexibility than standard javax.smartcardio package.
+
 A detailed description of all WinSCard API functions is available in the MSDN Library Documentation (https://msdn.microsoft.com/en-us/library/aa374731(v=VS.85).aspx).
 
 This library allows you to transmit and receive application protocol data units (APDUs) specified by ISO/IEC 7816-3 to a smart card in Java platform.
 
 # Project directory structure
-*/dist/ contains the runtime deployment directory, run runjava.bat to run the test program. Note you may need to modify runjava.bat to specify the JRE7 in your environment.
-*/vc_workspace/ contains the relevant VC++ 2010 projects
-*/eclipse_workspace/ contains the relevant Java projects
+/dist/ contains the runtime deployment directory, run runjava.bat to run the test program. Note you may need to modify runjava.bat to specify the JRE7 in your environment
+
+/vc_workspace/ contains the relevant VC++ 2010 projects
+
+/eclipse_workspace/ contains the relevant Java projects
 
 # Sample code
 As the java library strictly follows WinSCard API functions, as long as you understand WinSCard API functions as defined in MSDN Library, it should be very straightforward to start.
