@@ -14,6 +14,7 @@ This library allows you to transmit and receive application protocol data units 
 # Sample code
 As the java library strictly follows WinSCard API functions, as long as you understand WinSCard API functions as defined in MSDN Library, it should be very straightforward to start.
 
+```
 public static void main(String[] args) {
   //establish card context
   int hContext = PCSCAPI.SCardEstablishContext();
@@ -43,3 +44,4 @@ public static void main(String[] args) {
 		}
 	}
 }
+```
